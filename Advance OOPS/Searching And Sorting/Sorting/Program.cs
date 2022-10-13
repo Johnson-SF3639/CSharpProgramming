@@ -41,11 +41,16 @@ namespace Sorting
                         {
                             Console.WriteLine($"\nMerge Sort");
                             Console.WriteLine($"Sorted Array with Merge Sort");
-                            MergeSort(intArray, 0, intArray.Length);
+                            MergeSort(intArray, 0, intArray.Length-1);
+                            Display(intArray);
                             break;
                         }
                     case 5:
                         {
+                            Console.WriteLine($"\nQuick Sort");
+                            int[] sortArray = QuickSort(intArray,0,intArray.Length-1);
+                            Console.WriteLine($"Sorted Array with Quick Sort");
+                            Display(sortArray);
                             break;
                         }
                     case 6:
@@ -121,52 +126,76 @@ namespace Sorting
             return array;
         }
 
-        public static void MergeSort(int[] array, int start, int end)
+
+        static public void MainMerge(int[] numbers, int left, int mid, int right)    
+        {    
+            int[] temp = new int[25];    
+            int i, eol, num, pos;    
+            eol = (mid - 1);    
+            pos = left;   
+            num = (right - left + 1);     
+  
+            while ((left <= eol) && (mid <= right))    
+            {    
+                if (numbers[left] <= numbers[mid])    
+                    temp[pos++] = numbers[left++];    
+                else    
+                    temp[pos++] = numbers[mid++];    
+            }    
+            while (left <= eol)    
+                temp[pos++] = numbers[left++];    
+            while (mid <= right)    
+                temp[pos++] = numbers[mid++];   
+            for (i = 0; i < num; i++)    
+            {    
+                numbers[right] = temp[right];    
+                right--;    
+            }    
+        }   
+        public static void MergeSort(int[] array, int left, int right)
+        { 
+            int mid;    
+            if (right > left)    
+            {    
+                mid = (right + left) / 2;    
+                MergeSort(array, left, mid);    
+                MergeSort(array, (mid + 1), right);    
+                MainMerge(array, left, (mid + 1), right);    
+            } 
+
+        }
+
+        static void Swap(int[] numbers, int i, int j)
         {
-            int[] mergeSortArray = new int[array.Length];
-            int mid, i, j, k;
-            if (start < end)
+            int temp = numbers[i];
+            numbers[i] = numbers[j];
+            numbers[j] = temp;
+        }
+        static int Partition(int[] numbers, int low, int high)
+        {
+            int pivot = numbers[high];
+            int i = (low - 1);
+            for (int j = low; j <= high - 1; j++)
             {
-                mid = (start + end) / 2;
-                MergeSort(array, start, mid);
-                MergeSort(array, mid + 1, end);
-
-                i = start; j = mid - 1; k = start;
-
-                while ( i <= mid && j <= end)
+                if (numbers[j] < pivot)
                 {
-                    if (array[i] <= array[j])
-                    {
-                        mergeSortArray[k] = array[i];
-                        i++;
-                    }
-                    else
-                    {
-                        mergeSortArray[k] = array[j];
-                        j++;
-                    }
-                    k++;
-                }
-                if (i > mid){
-                    while (j <= end){
-                        mergeSortArray[k] = array[j];
-                        j++;
-                        k++;
-                    }
-                }
-                else{
-                    while (j <= mid){
-                        mergeSortArray[k] = array[i];
-                        i++;
-                        k++;    
-                    }
-                }
-                for (k = start; j <= end; k++){
-                    array[k] = mergeSortArray[k];
                     i++;
+                    Swap(numbers, i, j);
                 }
             }
-            Display(array);       
+            Swap(numbers, i + 1, high);
+            return (i + 1);
         }
+        static int[] QuickSort(int[] numbers, int low, int high)
+        {
+            if (low < high)
+            {
+                int pi = Partition(numbers, low, high);
+                QuickSort(numbers, low, pi - 1);
+                QuickSort(numbers, pi + 1, high);
+            }
+            return numbers;
+        }
+
     }
 }
